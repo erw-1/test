@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<!-- =====================================================================
+  km — STATIC WIKI
+  Self-contained wiki (Markdown + graph + search) runnable on any static host.
+  No build step. External libs via CDNs. https://github.com/erw-1/km
+======================================================================== -->
+<html lang="en">
+<head>
+  <!-- ——— Core meta ——— -->
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <meta name="referrer" content="no-referrer">
+
+  <!-- ——— Perf ——— -->
+  <link rel="preconnect"    href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preconnect"    href="https://hackmd.io" crossorigin>
+  <link rel="dns-prefetch"  href="https://cdn.jsdelivr.net">
+  <link rel="dns-prefetch"  href="https://hackmd.io">
+  
+  <script async type="module" src="km_testing.js"></script>
+  <link rel="stylesheet"      href="km.css">
+  
+  <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/marked@16.1.2/+esm" crossorigin>
+  <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/marked-alert@2.1.2/+esm" crossorigin>
+  <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/marked-footnote@1.4.0/+esm" crossorigin>
+
+  <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/d3-selection@3.0.0/+esm" crossorigin>
+  <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/d3-force@3.0.0/+esm" crossorigin>
+  <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/d3-drag@3.0.0/+esm" crossorigin>
+  <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/d3-dispatch@3.0.1/+esm" crossorigin>
+  <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/d3-quadtree@3.0.1/+esm" crossorigin>
+  <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/d3-timer@3.0.1/+esm" crossorigin>
+
+  <link rel="modulepreload" href="https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/es/core/+esm" crossorigin>
+  
+  <!-- =====================================================================
+  Configuration - Edit all this !
+  Replace example values. Uncomment what you need. Delete what you don't want.
+  ======================================================================== --> 
+
+     <!-- JS configuration for the content / theme / supported syntax highlighting
+      "MD" - Can also be a file eg. 'content.md'
+      "DEFAULT_THEME" - (optional) 'dark' | 'light' 
+      "ACCENT"    -     (optional) CSS color string '#3fabd1', 'red', etc. (optional)
+      "LANGS"     -     (optional) For codeblocks highlighting - Supported langs: https://cdn.jsdelivr.net/npm/highlight.js@11.11.1/es/languages/
+      "CACHE_MD"    -   (optional) Caching time (minutes) for the MD, set to "0" or blank to refresh content every reload
+    -->
+    <script type="application/json" id="km-config">     
+      {
+        "TITLE":          "Title of your wiki",
+        "MD":             "https://hackmd.io/@h-s-n/doc_test/download",
+        "DEFAULT_THEME":  "dark",
+        "ACCENT":         "#3fabd1",
+        "LANGS":          ["javascript", "bash", "markdown", "python", "css"],
+        "CACHE_MD":       "0"
+      }
+    </script>  
+  
+    <!-- Two additional things to change in the body: line 266, logo file name if you change it ; line 320  -->
+    <link rel="preload"   as="image" href="logo.webp" fetchpriority="high">
+    <link id="favicon-el" rel="icon" href="logo.webp">
+    <!-- <link rel="icon" href="/favicon.ico" sizes="any"> -->
+    <!-- <link rel="icon" type="image/png" href="/favicon-32.png" sizes="32x32"> -->
+    <!-- <link rel="icon" type="image/webp" href="/favicon.webp" sizes="32x32"> -->
+    <meta name="theme-color"       content="#1e1e1e">
+
+    <title>km - Static Wiki</title>
+
+    <meta name="description" content="Short description of this wiki/docs/etc.">
+    <link  rel="canonical"   href="https://example.com/"> <!-- Your URL -->
+
+    <!-- CSP -->
+    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; base-uri 'self'; object-src 'none'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; script-src 'self' https://cdn.jsdelivr.net; connect-src 'self' https://hackmd.io https://cdn.jsdelivr.net; font-src 'self' https://cdn.jsdelivr.net; frame-ancestors 'none'; form-action 'self'; upgrade-insecure-requests"> -->
+
+    <!-- ===== SEO block =============================================================
+          Replace example values. Uncomment what you need. Delete what you don't want.  
+    ================================================================================ -->
+
+      <!-- if you want search engines to index/follow & show big previews → robots -->
+      <!-- <meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1"> -->
+
+      <!-- if you want to add meta keywords: don't, major search engines ignore it in 2025 -->
+      <!-- <meta name="keywords" content="ignore,this,tag"> -->
+
+      <!-- if you want the canonical to consolidate duplicates → canonical -->
+      <!-- <link rel="canonical" href="https://example.com/current-page"> -->
+
+      <!-- if you want international versions (intl SEO) → hreflang alternates -->
+      <!-- <link rel="alternate" href="https://example.com/page"    hreflang="x-default"> -->
+      <!-- <link rel="alternate" href="https://example.com/page"    hreflang="en"> -->
+      <!-- <link rel="alternate" href="https://example.com/fr/page" hreflang="fr"> -->
+      <!-- <link rel="alternate" href="https://example.com/es/page" hreflang="es"> -->
+
+      <!-- if you want embedded-only pages to be indexable → indexifembedded -->
+      <!-- use together with noindex on the canonical page that only loads in an <iframe> -->
+      <!-- <meta name="robots" content="noindex,indexifembedded"> -->
+
+      <!-- if you want to prevent Google translations for this page -->
+      <!-- <meta name="robots" content="notranslate"> -->
+      
+      <!-- if you want to control snippets/images/videos on this page (legal/privacy) -->
+      <!-- Examples (UNCOMMENT ONE PER NEED): -->
+      <!-- <meta name="robots"    content="nosnippet"> -->
+      <!-- <meta name="googlebot" content="noimageindex"> -->
+      <!-- <meta name="robots"    content="max-snippet:0"> -->
+      <!-- <meta name="robots"    content="max-image-preview:standard"> -->
+      <!-- <meta name="robots"    content="max-video-preview:0"> -->
+
+      <!-- if you want to verify ownership → search engine verifications -->
+      <!-- <meta name="google-site-verification" content="GOOGLE_TOKEN"> -->
+      <!-- <meta name="msvalidate.01"            content="BING_TOKEN"> -->
+      <!-- <meta name="yandex-verification"      content="YANDEX_TOKEN"> -->
+      <!-- <meta name="p:domain_verify"          content="PINTEREST_TOKEN"> -->
+
+      <!-- if you want rich sharing on Facebook/LinkedIn/X → Open Graph -->
+      <!-- <meta property="og:type"        content="website">
+      <meta property="og:site_name"   content="Your Wiki Name">
+      <meta property="og:title"       content="Page Title (≈60 chars)">
+      <meta property="og:description" content="Compelling description (≤200 chars)">
+      <meta property="og:url"         content="https://example.com/current-page">
+      <meta property="og:image"       content="https://example.com/social/cover.jpg">
+      <meta property="og:image:alt"   content="Accessible alt text for the cover image"> -->
+
+      <!-- if you want rich sharing on X (Twitter) → Twitter cards -->
+      <!-- <meta name="twitter:card"        content="summary_large_image">
+      <meta name="twitter:title"       content="Page Title">
+      <meta name="twitter:description" content="Same as meta description">
+      <meta name="twitter:image"       content="https://example.com/social/cover.jpg"> -->
+
+      <!-- if you want automatic embeds on other sites → oEmbed discovery -->
+      <!-- <link rel="alternate" type="application/json+oembed" href="https://example.com/oembed.json?url={encoded_page_url}" title="oEmbed">
+      <link rel="alternate" type="text/xml+oembed"         href="https://example.com/oembed.xml?url={encoded_page_url}"  title="oEmbed"> -->
+
+      <!-- if you want AI & search to understand your site → Organization JSON-LD -->
+      <!-- <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Your Org",
+        "url": "https://example.com/",
+        "logo": "https://example.com/logo.png",
+        "sameAs": ["https://github.com/your-handle","https://www.linkedin.com/company/your-org"]
+      }
+      </script> -->
+
+      <!-- if you want a site searchbox & sitename eligibility → WebSite JSON-LD -->
+      <!-- <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Your Wiki",
+        "url": "https://example.com/",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://example.com/search?q={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      }
+      </script> -->
+
+      <!-- if you want breadcrumbs in rich results → BreadcrumbList JSON-LD -->
+      <!-- <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {"@type": "ListItem","position": 1,"name": "Home","item": "https://example.com/"},
+          {"@type": "ListItem","position": 2,"name": "Topic","item": "https://example.com/topic/"},
+          {"@type": "ListItem","position": 3,"name": "Current Page","item": "https://example.com/topic/current-page"}
+        ]
+      }
+      </script> -->
+
+      <!-- if you want a person/bio page → Person/ProfilePage JSON-LD -->
+      <!-- <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "ProfilePage",
+        "mainEntity": {
+          "@type": "Person",
+          "name": "Jane Doe",
+          "url": "https://example.com/jane-doe",
+          "image": "https://example.com/people/jane.jpg",
+          "jobTitle": "Researcher",
+          "affiliation": {"@type":"Organization","name":"Your Org"},
+          "sameAs": ["https://x.com/janedoe","https://www.wikidata.org/wiki/Q123"]
+        }
+      }
+      </script> -->
+
+      <!-- if you want to mark up articles/posts → Article JSON-LD -->
+      <!-- <script type="application/ld+json">
+      {
+        "@context":"https://schema.org",
+        "@type":"Article",
+        "headline":"Article Title",
+        "description":"One‑sentence summary.",
+        "author":{"@type":"Person","name":"Jane Doe"},
+        "datePublished":"2025-01-15",
+        "dateModified":"2025-01-15",
+        "image":["https://example.com/social/cover.jpg"],
+        "mainEntityOfPage":{"@type":"WebPage","@id":"https://example.com/current-page"}
+      }
+      </script> -->
+
+      <!-- if you want FAQs (limited rich result) → FAQPage JSON-LD -->
+      <!-- <script type="application/ld+json">
+      {
+        "@context":"https://schema.org",
+        "@type":"FAQPage",
+        "mainEntity":[
+          {"@type":"Question","name":"Question 1?","acceptedAnswer":{"@type":"Answer","text":"Answer 1."}},
+          {"@type":"Question","name":"Question 2?","acceptedAnswer":{"@type":"Answer","text":"Answer 2."}}
+        ]
+      }
+      </script> -->
+
+      <!-- if you want video eligibility → VideoObject JSON-LD -->
+      <!-- <script type="application/ld+json">
+      {
+        "@context":"https://schema.org",
+        "@type":"VideoObject",
+        "name":"Demo video",
+        "description":"What this page covers.",
+        "thumbnailUrl":["https://example.com/video/thumbnail.jpg"],
+        "uploadDate":"2025-01-15",
+        "duration":"PT2M10S",
+        "contentUrl":"https://cdn.example.com/video.mp4",
+        "embedUrl":"https://example.com/embed/video"
+      }
+      </script> -->
+
+      <!-- if you want software/app listing → SoftwareApplication JSON-LD -->
+      <!-- <script type="application/ld+json">
+      {
+        "@context":"https://schema.org",
+        "@type":"SoftwareApplication",
+        "name":"KM Static Wiki",
+        "operatingSystem":"Web",
+        "applicationCategory":"DeveloperApplication",
+        "offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}
+      }
+      </script> -->
+
+      <!-- if you want PWA install & better SERP icons → manifest & icons -->
+      <!-- <link rel="manifest" href="/site.webmanifest">
+      <link rel="icon" href="/favicon.ico" sizes="any">
+      <link rel="icon" href="/icon.svg" type="image/svg+xml">
+      <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+      <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#111111">
+      <meta name="theme-color" content="#111111"> -->
+
+      <!-- if you want Mastodon/identity verification → rel=me (not SEO, but useful) -->
+      <!-- <link rel="me" href="https://mastodon.social/@yourhandle"> -->
+
+    <!-- ===== End of SEO block ========================================= -->
+    
+  <!-- =====================================================================
+  End of configuration
+  ======================================================================== -->  
+  
+  <!-- Lighthouse good practice -->
+  <style>
+    :where(section, article, nav, aside) h1 { font-size: clamp(1.28rem, 1.10rem + 0.55vw, 1.5rem); }
+  </style>
+
+</head>
+
+<body>
+  <!-- ======================================================================
+       SIDEBAR • TREE + SEARCH
+  ====================================================================== -->
+  <nav id="sidebar" role="navigation" aria-label="Site navigation">
+    <a href="#" title="Home" aria-label="Home">
+      <div id="wiki-title" tabindex="0">
+        <img src="logo.webp" width="32" height="32" alt="" loading="lazy" decoding="async">            <!-- IF YOU RENAMED YOUR ICON/LOGO, EDIT THIS -->
+        <h1 id="wiki-title-text">Title of your wiki</h1>                                               <!-- EDIT THIS TO REDUCE LAYOUT SHIFT -->
+      </div>
+    </a>
+
+    <!-- ——— SEARCH BOX ——— -->
+    <div id="search-box">
+      <input id="search" type="search" placeholder="Search…" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="search" aria-label="Search">
+      <button id="search-clear" aria-label="Clear search" title="Clear search" style="display: none;">✕</button>
+    </div>
+
+    <!-- ——— DYNAMIC NAVIGATION TREES ——— -->
+    <ul id="tree" role="tree"></ul>
+    <ul id="results" role="list" aria-live="polite"></ul>
+  </nav>
+
+  <!-- ======================================================================
+       MAIN PANEL • BREADCRUMB + CONTENT + UTILS
+  ====================================================================== -->
+  <main>
+    <!-- ——— BREADCRUMB / TOP BAR ——— -->
+    <nav id="crumb" role="navigation" aria-label="Breadcrumb">
+      <button id="burger-sidebar" class="burger" aria-label="Open sidebar" aria-controls="sidebar" aria-expanded="false">
+        <svg width="24" height="24" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+      </button>
+
+      <a id="home-link" href="#" title="Home">
+        <svg width="20" height="20" viewBox="0 0 24 16"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+      </a>
+      <span id="crumb-dyn"></span>
+
+      <button id="burger-util" class="burger" aria-label="Open utility panel" aria-controls="util" aria-expanded="false">
+        <svg width="24" height="24" viewBox="0 0 24 24"><circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/></svg>
+      </button>
+
+      <button id="theme-toggle" class="theme-toggle" aria-pressed="false" aria-label="Toggle light / dark">
+        <!-- sun -->
+        <svg class="sun" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="5"></circle>
+          <g stroke-linecap="round" stroke-width="2">
+            <line x1="12" y1="1"  x2="12" y2="4"></line><line x1="12" y1="20" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="6.34" y2="6.34"></line><line x1="17.66" y1="17.66" x2="19.78" y2="19.78"></line>
+            <line x1="1"  y1="12" x2="4"  y2="12"></line><line x1="20" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="6.34" y2="17.66"></line><line x1="17.66" y1="6.34" x2="19.78" y2="4.22"></line>
+          </g>
+        </svg>
+        <!-- moon -->
+        <svg class="moon" width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"></path>
+        </svg>
+      </button>
+    </nav>
+
+    <!-- ——— MAIN CONTENT / ARTICLE AREA ——— -->
+    <div id="content-area">
+      <article id="content">
+        <div style="position:absolute; left:-9999px">             <!-- For SEO, Static content for search engines that don't render JS, not visible and optional, instantly replaced by MD content-->
+          <h1>Title of the Wiki</h1>
+          <p>Add all the static content you want for SEO</p>
+        </div>                                                    <!-- SEO end -->
+        
+        <h2 id="loading" role="status" aria-live="polite">Knowledge is loading...</h2>
+        <noscript>This site requires JavaScript to load content.</noscript>
+      </article>
+
+      <!-- ——— RIGHT UTILITY PANE (mini-graph + ToC) ——— -->
+      <section id="util" aria-labelledby="util-heading">
+        <div id="graph-box">
+          <svg id="mini" role="img" aria-label="Document graph"></svg>
+          <button id="expand" type="button" aria-controls="mini" aria-expanded="false" aria-label="Expand graph">⛶</button>
+        </div>
+
+        <a class="watermark" href="https://github.com/erw-1/km" target="_blank" rel="noopener noreferrer">Powered by KM</a>
+        <nav id="toc" aria-label="Table of contents"></nav>
+      </section>
+    </div>
+  </main>
+</body>
+</html>
